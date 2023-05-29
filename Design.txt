@@ -1,0 +1,173 @@
+The following document explains the design and function of each of the classes in our game.
+____________________________________________________________________________
+interface IContentCell
+
+
+This interface represents a piece of content that would be in a cell (since a cell has some form of content and something on the ground). Using an interface was the optimal choice here since there are several types of content that need the same functions (but carried out differently for each). Additionally, many actions are performed on a cell’s content, regardless of the type; the implementation of this interface streamlined this process.
+
+
+class Wall implements IContentCell
+
+
+This class represents a wall, which is one type of content that a cell could contain. Naturally, it implements the cell content interface. 
+
+
+class Box implements IContentCell
+
+
+This class represents a box, which is one type of content that a cell could contain. Naturally, it implements the cell content interface. 
+
+
+class Player implements IContentCell
+
+
+This class represents a player, which is one type of content that a cell could contain. Naturally, it implements the cell content interface. The player has a direction, represented as a string. 
+
+
+class Trophy implements IContentCell
+
+
+This class represents a trophy, which is one type of content that a cell could contain. Naturally, it implements the cell content interface. The trophy has a color, represented as a string.
+
+
+class BlankContent implements IContentCell
+
+
+This class represents a trophy, which is one type of content that a cell could contain. Naturally, it implements the cell content interface. 
+
+
+class Hole implements IContentCell
+
+
+This class represents a hole, which is one type of content that a cell would contain. Naturally, it implements the cell content interface.
+
+
+interface IGroundCell
+
+
+This interface represents something on the ground that would be in a cell (since a cell has some form of content and something on the ground). Using an interface was the optimal choice here since there are several types of grounds that need the same functions (but carried out differently for each). Additionally, many actions are performed on a cell’s ground, regardless of the type; the implementation of this interface streamlined this process.
+
+
+class Target implements IGroundCell
+
+
+This class represents a target on the ground, which is one type of ground that a cell could contain. Naturally, it implements the cell ground interface. The target has a color, represented as a string.
+
+
+class BlankGround implements IGroundCell
+
+
+This class represents a blank ground, which is one type of ground that a cell could contain. Naturally, it implements the cell ground interface. 
+
+
+class Cell
+
+
+This class represents a cell, which is the fundamental building block of this Sokoban game. A cell represents one square unit on the grid-like board. A cell has something on the ground, which is represented by the IGroundCell field it possesses, and some form of content, which is represented by the IContentCell field. 
+
+
+class Board
+
+
+This class represents a board composed of cells. This is the board on which the Sokoban game will be played. The board consists of a two dimensional list of cells, more specifically a list of lists of cells. This list rectangularly organizes them to create the board. The exact nature of the list is defined in the IList<T> interface. The board has several functions such as moving a player in one of four directions, checking whether the level has been successfully completed, and rendering itself, but each of these merely delegates the work to a function object. Each of these function objects are discussed further below.
+
+
+class ArrayUtils
+
+
+This class contains a few utility functions that are called on ArrayLists. Examples include folding an arraylist, mapping onto it, and getting the index of one of its elements.
+class Utils
+
+
+This class contains a few utility functions, including one which, given a contents string and a ground string, returns the corresponding board.
+
+
+interface IContentCellVisitor<R> extends Function<IContentCell, R>
+
+
+This interface represents a visitor to a content cell. The visitor’s functions can return a generic and can do various different things to a cell’s content.
+
+
+class DrawContent implements IContentCellVisitor<WorldImage>
+
+
+This class contains a method to draw each of the cell content types. It extends the content cell visitor interface.
+
+
+class IsAPlayer implements IContentCellVisitor<Boolean>
+
+
+This class contains a method that checks if a content is a player for each of the possible types of content. It extends the content cell visitor interface.
+
+
+interface IGroundCellVisitor<R> extends Function<IGroundCell, R>
+
+
+This interface represents a visitor to a ground cell. The visitor’s functions can return a generic and can do various different things to a cell’s ground.
+
+
+class DrawGround implements IGroundCellVisitor<WorldImage>
+
+
+This class contains a method to draw each of the cell ground types. It extends the ground cell visitor interface.
+
+
+class DrawCell implements Function<Cell, WorldImage>
+
+
+This function object draws a cell by overlaying an image of the cell’s content on top of the image of the cell’s ground.
+
+
+class DrawRow implements BiFunction<Cell, WorldImage, WorldImage>
+
+
+This function object takes in an existing image and a cell and merges the cell’s image into the existing image.
+
+
+class DrawColumn implements BiFunction<ArrayList<Cell>, WorldImage, WorldImage>
+
+
+This function object takes in an existing image and a list of cells and merges the image of the list of cells into the existing image.
+
+
+class CompletedRow implements Function<IList<Cell>, Boolean>
+
+
+This function object checks if a row is complete by making sure each of its cells is complete.
+
+
+class CompletedCell implements Function<Cell, Boolean>
+
+
+This function object checks if a cell is complete (no targets without a same colored trophy on top) using double dispatch.
+
+
+class RowContainsPlayer implements Function<IList<Cell>, Boolean>
+
+
+This function object checks to see if a row contains a player by checking each cell to see if it is a player or not.
+
+
+class DoesThisCellHaveAPlayer implements Function<Cell, Boolean>
+
+
+This function object checks if a cell contains a player using another function object.
+
+
+
+class PlayLevel extends World 
+
+
+This function acts as BigBang, and allows us to play the game. There is a makeScene method to render the board on the screen, an onTick method to update the board, and an onKeyEvent method to respond to key presses by updating the board accordingly.
+
+
+class FinishedLevel extends World
+
+
+This function acts to provide a stable world state when the level has been completed. It displays the provided message on top of the finished board and freezes the world in that state to end the game.
+
+
+class ExamplesSokobans
+
+
+This is the examples class. There are some tests to make sure everything is working and example levels that are used to run and test the game.
